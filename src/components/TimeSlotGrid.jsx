@@ -65,11 +65,28 @@ const TimeSlotGrid = () => {
         let isMounted = true;
         setLoading(true);
 
-        getAvailability({ date: selectedDate.toISOString(), people })
+        const formattedDate = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+        getAvailability(selectedDate.toISOString(), people)
             .then((data) => {
                 if (isMounted) {
-                    setLunchTimes(data.lunch);
-                    setDinnerTimes(data.dinner);
+                    if (data && data.options) {
+                        const times = data.options.map(opt => opt.start);
+                        const lunch = times.filter(t => parseInt(t.split(':')[0], 10) < 17);
+                        const dinner = times.filter(t => parseInt(t.split(':')[0], 10) >= 17);
+                        setLunchTimes(lunch);
+                        setDinnerTimes(dinner);
+                    } else {
+                        setLunchTimes([]);
+                        setDinnerTimes([]);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error("Error al obtener disponibilidad:", error);
+                if (isMounted) {
+                    setLunchTimes([]);
+                    setDinnerTimes([]);
                 }
             })
             .finally(() => {
@@ -91,31 +108,43 @@ const TimeSlotGrid = () => {
                 <div className="loading-times">Comprobando disponibilidad...</div>
             ) : (
                 <>
-                    <div className="timeslot-title">COMIDA</div>
-                    <div className="timeslot-grid">
-                        {lunchTimes.map(time => (
-                            <button
-                                key={time}
-                                className={`time-btn ${selectedTime === time ? 'active' : ''}`}
-                                onClick={() => setSelectedTime(time)}
-                            >
-                                {time}
-                            </button>
-                        ))}
-                    </div>
+                    {lunchTimes.length > 0 && (
+                        <>
+                            <div className="timeslot-title">COMIDA</div>
+                            <div className="timeslot-grid">
+                                {lunchTimes.map(time => (
+                                    <button
+                                        key={time}
+                                        className={`time-btn ${selectedTime === time ? 'active' : ''}`}
+                                        onClick={() => setSelectedTime(time)}
+                                    >
+                                        {time}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
 
-                    <div className="timeslot-title">CENA</div>
-                    <div className="timeslot-grid">
-                        {dinnerTimes.map(time => (
-                            <button
-                                key={time}
-                                className={`time-btn ${selectedTime === time ? 'active' : ''}`}
-                                onClick={() => setSelectedTime(time)}
-                            >
-                                {time}
-                            </button>
-                        ))}
-                    </div>
+                    {dinnerTimes.length > 0 && (
+                        <>
+                            <div className="timeslot-title">CENA</div>
+                            <div className="timeslot-grid">
+                                {dinnerTimes.map(time => (
+                                    <button
+                                        key={time}
+                                        className={`time-btn ${selectedTime === time ? 'active' : ''}`}
+                                        onClick={() => setSelectedTime(time)}
+                                    >
+                                        {time}
+                                    </button>
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {lunchTimes.length === 0 && dinnerTimes.length === 0 && !loading && (
+                        <div className="loading-times">No hay horas disponibles para esta fecha.</div>
+                    )}
                 </>
             )}
         </div>
