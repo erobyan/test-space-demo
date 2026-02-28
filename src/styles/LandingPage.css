@@ -1,0 +1,242 @@
+.landing-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)),
+        url('../assets/hero.jpeg') center/cover no-repeat;
+    color: var(--color-white);
+}
+
+.hero-content {
+    max-width: 800px;
+    background: transparent;
+    padding: 60px 40px;
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    line-height: 1.2;
+    color: var(--color-white);
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-sans);
+    margin-bottom: 40px;
+}
+
+.hero-cta {
+    display: inline-block;
+    font-size: 1.25rem;
+    padding: 18px 48px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* Experiencia a Bordo - Image Slider */
+.exp-slider-section {
+    padding: 80px 0;
+    background-color: var(--color-white);
+}
+
+.exp-slider-container {
+    position: relative;
+    max-width: 1000px;
+    height: 600px;
+    margin: 0 auto;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background-color: var(--color-navy);
+}
+
+.exp-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.exp-slide.active {
+    opacity: 1;
+}
+
+/* Slider Indicators */
+.slider-indicators {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.indicator.active {
+    background-color: var(--color-white);
+    transform: scale(1.2);
+}
+
+.indicator:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    color: var(--color-navy);
+}
+
+/* Sobre Nosotros */
+.about-section {
+    padding: 80px 0;
+    background-color: var(--color-sand);
+    color: var(--color-navy);
+}
+
+.about-container {
+    max-width: 800px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.about-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+    color: var(--color-navy);
+    font-family: var(--font-serif);
+}
+
+.about-text p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+}
+
+/* Platos Estrella */
+.dishes-section {
+    padding: 80px 0;
+    background-color: var(--color-off-white);
+}
+
+.dishes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.dish-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform var(--transition-normal);
+}
+
+.dish-card:hover {
+    transform: translateY(-10px);
+}
+
+.dish-img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.dish-info {
+    padding: 30px;
+    text-align: center;
+}
+
+.dish-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.dish-info p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+
+
+/* Final CTA */
+.final-cta-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, var(--color-navy), #0F2547);
+    color: var(--color-white);
+}
+
+.final-cta-section .section-title {
+    color: var(--color-white);
+    margin-bottom: 20px;
+}
+
+.final-cta-text {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 40px;
+}
+
+.mt-4 {
+    margin-top: 30px;
+}
+
+/* Simple Footer */
+.footer {
+    text-align: center;
+    padding: 40px 0;
+    background-color: var(--color-off-white);
+    color: var(--text-secondary);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-content {
+        padding: 40px 20px;
+    }
+}

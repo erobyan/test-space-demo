@@ -1,0 +1,101 @@
+.calendar-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.calendar-header button {
+    background: none;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.calendar-header button:hover {
+    background: var(--color-off-white);
+    color: var(--color-navy);
+}
+
+.calendar-month {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    text-transform: capitalize;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.calendar-day-header {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.calendar-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+/* Day Types */
+.calendar-cell.empty {
+    cursor: default;
+    background: transparent;
+}
+
+.calendar-cell.available {
+    background-color: var(--color-off-white);
+    color: var(--color-navy);
+}
+
+.calendar-cell.available:hover {
+    border-color: var(--color-turquoise);
+}
+
+.calendar-cell.unavailable {
+    background-color: rgba(224, 90, 71, 0.1);
+    color: var(--color-coral);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.calendar-cell.selected {
+    background-color: var(--color-turquoise);
+    color: var(--color-white);
+    font-weight: 600;
+    border-color: var(--color-turquoise);
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(72, 201, 176, 0.3);
+}
+
+/* Today accent */
+.calendar-cell.today.available:not(.selected) {
+    border: 1px dashed var(--color-turquoise);
+}
