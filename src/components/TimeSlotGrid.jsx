@@ -50,7 +50,7 @@ const TimeGridStyles = `
 `;
 
 const TimeSlotGrid = () => {
-    const { selectedDate, selectedTime, setSelectedTime, people } = useBooking();
+    const { selectedDate, selectedTime, setSelectedTime, people, setAvailableOptions } = useBooking();
     const [lunchTimes, setLunchTimes] = useState([]);
     const [dinnerTimes, setDinnerTimes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -67,16 +67,18 @@ const TimeSlotGrid = () => {
 
         const formattedDate = new Date(selectedDate.getTime() - (selectedDate.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
 
-        getAvailability(selectedDate.toISOString(), people)
+        getAvailability(formattedDate, people)
             .then((data) => {
                 if (isMounted) {
                     if (data && data.options) {
+                        setAvailableOptions(data.options);
                         const times = data.options.map(opt => opt.start);
                         const lunch = times.filter(t => parseInt(t.split(':')[0], 10) < 17);
                         const dinner = times.filter(t => parseInt(t.split(':')[0], 10) >= 17);
                         setLunchTimes(lunch);
                         setDinnerTimes(dinner);
                     } else {
+                        setAvailableOptions([]);
                         setLunchTimes([]);
                         setDinnerTimes([]);
                     }
@@ -85,6 +87,7 @@ const TimeSlotGrid = () => {
             .catch(error => {
                 console.error("Error al obtener disponibilidad:", error);
                 if (isMounted) {
+                    setAvailableOptions([]);
                     setLunchTimes([]);
                     setDinnerTimes([]);
                 }

@@ -16,7 +16,9 @@ const BookingPage = () => {
         setSelectedZone,
         bookingConfirmed,
         setBookingConfirmed,
-        resetBooking
+        resetBooking,
+        metadata,
+        availableOptions
     } = useBooking();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,12 +27,21 @@ const BookingPage = () => {
     const handleConfirm = async () => {
         setIsSubmitting(true);
         try {
-            await createBooking({
+            const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+            const bookingData = {
                 people,
-                date: selectedDate.toISOString(),
-                time: selectedTime,
-                zone: selectedZone
-            });
+                date: formattedDate,
+                start: selectedTime,
+                customer: {
+                    name: "Customer Data",
+                    phone: "000000000"
+                }
+            };
+            if (selectedZone) {
+                bookingData.location = selectedZone;
+            }
+
+            await createBooking(bookingData);
             setBookingConfirmed(true);
         } catch (error) {
             console.error("Booking failed:", error);
@@ -55,6 +66,15 @@ const BookingPage = () => {
         });
     };
 
+    const maxPeople = metadata?.reservationModel?.maxPeoplePerReservation || 8;
+    const peopleOptions = Array.from({ length: maxPeople }, (_, i) => i + 1);
+
+    const activeLocations = (() => {
+        if (!selectedTime) return [];
+        const opt = availableOptions.find(o => o.start === selectedTime);
+        return opt ? (opt.locations || []) : [];
+    })();
+
     return (
         <div className="booking-page">
             <div className="booking-container">
@@ -71,7 +91,7 @@ const BookingPage = () => {
                         value={people}
                         onChange={(e) => setPeople(Number(e.target.value))}
                     >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(num => (
+                        {peopleOptions.map(num => (
                             <option key={num} value={num}>
                                 {num} {num === 1 ? 'persona' : 'personas'}
                             </option>
@@ -94,30 +114,25 @@ const BookingPage = () => {
                 )}
 
                 {/* Zona */}
-                {selectedTime && (
+                {selectedTime && activeLocations.length > 0 && (
                     <section className="step-section" style={{ animation: 'fadeIn 0.3s ease-out' }}>
                         <h2 className="step-title">4. Seleccione una zona del restaurante</h2>
                         <div className="zone-grid">
-                            <button
-                                className={`zone-btn ${selectedZone === 'Sala' ? 'active' : ''}`}
-                                onClick={() => setSelectedZone('Sala')}
-                            >
-                                <span>Sala</span>
-                                <span className="zone-desc">(Interior)</span>
-                            </button>
-                            <button
-                                className={`zone-btn ${selectedZone === 'Terraza' ? 'active' : ''}`}
-                                onClick={() => setSelectedZone('Terraza')}
-                            >
-                                <span>Terraza</span>
-                                <span className="zone-desc">(Exterior)</span>
-                            </button>
+                            {activeLocations.map(loc => (
+                                <button
+                                    key={loc}
+                                    className={`zone-btn ${selectedZone === loc ? 'active' : ''}`}
+                                    onClick={() => setSelectedZone(loc)}
+                                >
+                                    <span>{loc}</span>
+                                </button>
+                            ))}
                         </div>
                     </section>
                 )}
 
                 {/* Resumen */}
-                {selectedZone && (
+                {selectedTime && (!activeLocations.length || selectedZone) && (
                     <div className="summary-panel" style={{ animation: 'slideUp 0.3s ease-out' }}>
                         <h3 className="summary-title">Resumen de tu Reserva</h3>
                         <div className="summary-grid">
@@ -135,10 +150,12 @@ const BookingPage = () => {
                                 <span className="summary-label">Hora</span>
                                 <span className="summary-value">{selectedTime}</span>
                             </div>
-                            <div className="summary-item">
-                                <span className="summary-label">Zona</span>
-                                <span className="summary-value">{selectedZone}</span>
-                            </div>
+                            {selectedZone && (
+                                <div className="summary-item">
+                                    <span className="summary-label">Zona</span>
+                                    <span className="summary-value">{selectedZone}</span>
+                                </div>
+                            )}
                         </div>
 
                         <button

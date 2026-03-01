@@ -1,4 +1,6 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { getReservationMetadata } from '../api/bookingApi';
+
 
 const BookingContext = createContext();
 
@@ -12,6 +14,19 @@ export const BookingProvider = ({ children }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedZone, setSelectedZone] = useState(null);
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [metadata, setMetadata] = useState(null);
+  const [availableOptions, setAvailableOptions] = useState([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    getReservationMetadata()
+      .then(data => {
+        if (isMounted) setMetadata(data);
+      })
+      .catch(err => console.error("Could not fetch metadata:", err));
+    return () => { isMounted = false; };
+  }, []);
+
 
   // Function to reset the flow if date changes
   const handleDateChange = (date) => {
@@ -31,6 +46,7 @@ export const BookingProvider = ({ children }) => {
     setSelectedTime(null);
     setSelectedZone(null);
     setBookingConfirmed(false);
+    setAvailableOptions([]);
   };
 
   const value = {
@@ -44,7 +60,10 @@ export const BookingProvider = ({ children }) => {
     setSelectedZone,
     bookingConfirmed,
     setBookingConfirmed,
-    resetBooking
+    resetBooking,
+    metadata,
+    availableOptions,
+    setAvailableOptions
   };
 
   return (

@@ -5,29 +5,8 @@ import '../styles/Calendar.css';
 const DAYS_OF_WEEK = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
 const Calendar = () => {
-    const { selectedDate, setSelectedDate } = useBooking();
+    const { selectedDate, setSelectedDate, metadata } = useBooking();
     const [currentDate, setCurrentDate] = useState(new Date());
-
-    // State to simulate which days are unavailable in the current view
-    const [unavailableDays, setUnavailableDays] = useState([]);
-
-    useEffect(() => {
-        // Generate mock unavailable days when month changes
-        // Let's make randomly 3-5 days unavailable each month for demo purposes
-        // Or mathematically predict it so it doesn't flicker on re-renders completely randomly
-        const generateMockUnavailable = () => {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            const numDays = new Date(year, month + 1, 0).getDate();
-            const arr = [];
-            // Every 5th and 13th and 25th day of any month is visually "full" or "unavailable" for the mock
-            if (numDays >= 5) arr.push(5);
-            if (numDays >= 13) arr.push(13);
-            if (numDays >= 25) arr.push(25);
-            return arr;
-        };
-        setUnavailableDays(generateMockUnavailable());
-    }, [currentDate.getMonth(), currentDate.getFullYear()]);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -113,9 +92,22 @@ const Calendar = () => {
                         return <div key={`empty-${idx}`} className="calendar-cell empty"></div>;
                     }
 
-                    const isUnavailable = unavailableDays.includes(day);
-                    const isAvail = !isUnavailable;
+                    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const note = metadata?.schedule?.[dateString]?.notes;
+
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    const cellDate = new Date(year, month, day);
+                    const latestDays = metadata?.latestBookingDays || 60; // Default to 60 if missing
+
+                    const maxDate = new Date(today);
+                    maxDate.setDate(today.getDate() + latestDays);
+
+                    // Block past days and days beyond latestBookingDays
+                    const isAvail = cellDate >= today && cellDate <= maxDate;
                     const statusClass = isAvail ? 'available' : 'unavailable';
+
                     const selectedClass = isSelected(day) ? 'selected' : '';
                     const todayClass = isToday(day) ? 'today' : '';
 
@@ -126,6 +118,11 @@ const Calendar = () => {
                             onClick={() => handleDateClick(day, isAvail)}
                         >
                             {day}
+                            {note && (
+                                <div className="calendar-note" style={{ fontSize: '0.65em', color: '#e05a47', marginTop: '2px', lineHeight: '1.2' }}>
+                                    {note}
+                                </div>
+                            )}
                         </div>
                     );
                 })}
