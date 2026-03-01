@@ -118,11 +118,6 @@ const Calendar = () => {
                             onClick={() => handleDateClick(day, isAvail)}
                         >
                             {day}
-                            {note && (
-                                <div className="calendar-note" style={{ fontSize: '0.65em', color: '#e05a47', marginTop: '2px', lineHeight: '1.2' }}>
-                                    {note}
-                                </div>
-                            )}
                         </div>
                     );
                 })}

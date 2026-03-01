@@ -109,6 +109,18 @@ const BookingPage = () => {
                 {selectedDate && (
                     <section className="step-section">
                         <h2 className="step-title">3. Elige tu Turno</h2>
+                        {(() => {
+                            const dateString = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+                            const note = metadata?.schedule?.[dateString]?.notes;
+                            if (note) {
+                                return (
+                                    <div style={{ backgroundColor: '#fdf3f2', color: '#e05a47', padding: '12px 16px', borderRadius: '8px', marginBottom: '20px', fontSize: '0.95rem', borderLeft: '4px solid #e05a47', animation: 'fadeIn 0.3s ease' }}>
+                                        <strong>Aviso:</strong> {note}
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })()}
                         <TimeSlotGrid />
                     </section>
                 )}
